@@ -141,23 +141,28 @@ function clear_markers(svg) {
 function vpy(y) { return -y; }
 function vpx(x) { return x; }
 
+// just render the markers
+function render_marker(svg, bal_vec) {
+  let tri_point = m.invertTriadBalance2to3(bal_vec,
+                                         svg.triad_balance_state.TRIAD_WORLD_TRIANGLE,
+                                         svg.triad_balance_state.NORM_TO_USE);
+  let point = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+  point.setAttributeNS(null, 'cx', vpx(tri_point[0]));
+  point.setAttributeNS(null, 'cy', vpy(tri_point[1]));
+  // This value can be overridden in CSS
+  point.setAttributeNS(null, 'r', 3);
+  point.setAttributeNS(null,"class","triad-marker");
+  point.ISMARKER = true;
+  svg.appendChild(point);
+}
+
 // svg is the HTML Element
 // bal_vec is the balance vector (a 3-vector in the unit attribute space.)
 function rerender_marker(svg,bal_vec) {
   if (bal_vec) {
     // We have to find the current marker and remove it..
     clear_markers(svg);
-    let tri_point = m.invertTriadBalance2to3(bal_vec,
-                                           svg.triad_balance_state.TRIAD_WORLD_TRIANGLE,
-                                           svg.triad_balance_state.NORM_TO_USE);
-    let point = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
-    point.setAttributeNS(null, 'cx', vpx(tri_point[0]));
-    point.setAttributeNS(null, 'cy', vpy(tri_point[1]));
-    // This value can be overridden in CSS
-    point.setAttributeNS(null, 'r', 3);
-    point.setAttributeNS(null,"class","triad-marker");
-    point.ISMARKER = true;
-    svg.appendChild(point);
+    render_marker(svg, bal_vec);
   }
 }
 
@@ -225,6 +230,22 @@ function render_svg(svg,fs_ratio_to_height) {
   origin.setAttributeNS(null, 'r', 2);
   origin.setAttributeNS(null,"id","triangle_origin");
   svg.appendChild(origin);
+}
+
+// svg is the HTML SVG element
+// bal_vectors ia an array of balance vectors
+function load_data(svg, bal_vectors) {
+  return new Promise((resolve, reject) => {
+    try {
+      bal_vectors.forEach(value => {
+        render_marker(svg, value);
+      });
+      resolve(true);
+    }
+    catch(er) {
+      reject(er);
+    }
+  });
 }
 
 
@@ -340,7 +361,8 @@ module.exports = {
   set_norm_to_use: set_norm_to_use,
   set_labels: set_labels,
   TriadBalance2to3: m.TriadBalance2to3,
-  invertTriadBalance2to3: m.invertTriadBalance2to3
+  invertTriadBalance2to3: m.invertTriadBalance2to3,
+  load_data: load_data
 };
 
 console.log(vec);
