@@ -238,6 +238,7 @@ function render_svg(svg,fs_ratio_to_height) {
 // svg is the HTML SVG element
 // bal_vectors ia an array of balance vectors
 function load_data(tbs, bal_vectors) {
+  clear_markers(tbs.SVG_ELT);
   tbs.DATA = bal_vectors;
   return new Promise((resolve, reject) => {
     try {
