@@ -71,6 +71,9 @@ class TriadBalanceState {
     this.POINTS_UPWARD = pu;
     // The length of a triangle side to SVG elment size (ratio)
     this.SIDE_TO_MIN_BOUND = s_t_m_b;
+
+    // Keep data in case of resizing
+    this.DATA = null;
   }
   get Hhalf() {
     return this.H/2;
@@ -234,11 +237,12 @@ function render_svg(svg,fs_ratio_to_height) {
 
 // svg is the HTML SVG element
 // bal_vectors ia an array of balance vectors
-function load_data(svg, bal_vectors) {
+function load_data(tbs, bal_vectors) {
+  tbs.DATA = bal_vectors;
   return new Promise((resolve, reject) => {
     try {
       bal_vectors.forEach(value => {
-        render_marker(svg, value);
+        render_marker(tbs.SVG_ELT, value);
       });
       resolve(true);
     }
@@ -300,7 +304,7 @@ function clicked(evt,fs,svg,labels,click_callback) {
 // fs_ratio_to_height is the ration of the font_size to the height of svg
 // s_to_m_b is the ratio of a side of the triangle to the minimum bound of the svg
 // ydpc  is the Y displacement percent (downward) to make it look balanced
-function initialize_triad_diagram(tbs) {
+function initialize_triad_diagram(tbs, read = false) {
   tbs.SVG_ELT.triad_balance_state = tbs;
 
   // We need this as a separate function to handle resize events.
@@ -333,22 +337,30 @@ function initialize_triad_diagram(tbs) {
                      `-${Whalf} -${Hhalf+H*oriented_ydpc/100.0} ${W} ${H}`);
     render_svg(tbs.SVG_ELT,svg.triad_balance_state.FONT_SIZE_RATIO_TO_HEIGHT);
     rerender_marker(tbs.SVG_ELT,svg.triad_balance_state.CUR_BALANCE);
+
+    console.log(tbs.DATA);
+    if (tbs.DATA) {
+      load_data(tbs, tbs.DATA);
+    }
   }
 
   setSizeConstants(tbs.SVG_ELT);
 
-  tbs.SVG_ELT.addEventListener(
-    "click",
-    (evt) =>
-      clicked(evt,tbs.SVG_ELT.triad_balance_state.FONT_SIZE_RATIO_TO_HEIGHT,
-              tbs.SVG_ELT,tbs.LABELS,tbs.CLICK_CALLBACK)
-  );
+  if (!read) {
+    tbs.SVG_ELT.addEventListener(
+      "click",
+      (evt) =>
+        clicked(evt,tbs.SVG_ELT.triad_balance_state.FONT_SIZE_RATIO_TO_HEIGHT,
+                tbs.SVG_ELT,tbs.LABELS,tbs.CLICK_CALLBACK)
+    );
+  }
 
   window.addEventListener(
     "resize",
     (evt) => {
       setSizeConstants(tbs.SVG_ELT);
     });
+
 
 }
 
