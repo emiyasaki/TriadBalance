@@ -19,6 +19,11 @@ The Triad Balance widget is fully responsive and stylable in css.
 It should be easy for any JavaScript programmer to embed this on
 a page. A full test suite and example code should assist in reuse.
 </p>
+This fork has a new method, `load_data(triadb, balance_vectors)`, where `triadb` is the reference to the Triad Balance and
+`balance_vectors` is an array of balance vectors.
+
+Also, the `initialize_triad_diagram()` also has a second optional boolean parameter if you want to just read the loaded data 
+(in this case, the click is disabled). The default is `false`, i.e. any click inside the triangle will create the dot.
 
 # Usage
 
