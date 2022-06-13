@@ -9,10 +9,10 @@
   },
   "scripts": {
     "build": "npm run bbrowser; npm run build-browser-test; npm run copy-all",
-    "bbrowser": "browserify -p tinyify src/TriadBalanceDiagram.js --standalone triadb > dist/TriadBalance.js",
+    "bbrowser": "browserify -p tinyify src/TriadBalanceDiagram.js --standalone triadb > dist/triadbalance.min.js",
     "bbrowser-debug": "browserify --debug src/TriadBalanceDiagram.js --standalone triadb > dist/TriadBalance.debug.js",
     "build-browser-test": "browserify --debug test/TriadBalanceTest.js --standalone triadbtest > dist/TriadBalanceTest.js",
-    "copy-all": "cp src/TriadBalance.css dist/TriadBalance.css; cp dist/TriadBalance.js TriadBalance.forJSFiddle.js"
+    "copy-all": "cp src/TriadBalance.css dist/TriadBalance.css; cp dist/triadbalance.min.js TriadBalance.forJSFiddle.js"
   },
   "repository": {
     "type": "git",
